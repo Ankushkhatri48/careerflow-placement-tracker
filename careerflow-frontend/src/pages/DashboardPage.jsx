@@ -140,7 +140,7 @@ export default function DashboardPage() {
           </div>
           <div className="pt-4 border-t border-slate-800/80 mt-4">
             <a
-              href="http://localhost:8080/swagger-ui.html"
+              href={`${(import.meta.env.VITE_API_URL || 'http://localhost:8080/api/v1').replace(/\/api\/v1\/?$/, '')}/swagger-ui/index.html`}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 text-xs text-teal-400 font-semibold hover:underline"

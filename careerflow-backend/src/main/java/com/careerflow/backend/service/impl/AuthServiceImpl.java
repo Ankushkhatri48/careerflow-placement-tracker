@@ -114,13 +114,16 @@ public class AuthServiceImpl implements AuthService {
     }
 
     private RefreshToken createRefreshToken(User user) {
-        refreshTokenRepository.deleteByUser(user);
+        RefreshToken refreshToken = refreshTokenRepository.findByUser(user)
+                .orElseGet(() -> new RefreshToken(
+                        user,
+                        UUID.randomUUID().toString(),
+                        Instant.now().plusMillis(refreshTokenExpirationMs)
+                ));
 
-        RefreshToken refreshToken = new RefreshToken(
-                user,
-                UUID.randomUUID().toString(),
-                Instant.now().plusMillis(refreshTokenExpirationMs)
-        );
+        refreshToken.setToken(UUID.randomUUID().toString());
+        refreshToken.setExpiryDate(Instant.now().plusMillis(refreshTokenExpirationMs));
+        refreshToken.setRevoked(false);
 
         return refreshTokenRepository.save(refreshToken);
     }

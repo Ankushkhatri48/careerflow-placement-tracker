@@ -74,9 +74,10 @@ public class SecurityConfig {
                         .accessDeniedHandler(accessDeniedHandler)
                 )
                 .authorizeHttpRequests(auth -> auth
-                        // Root path and Swagger documentation
+                        // Root path, health check and Swagger documentation
                         .requestMatchers(
                                 "/",
+                                "/api/v1/health",
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html"
