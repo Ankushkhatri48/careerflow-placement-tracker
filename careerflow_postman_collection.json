@@ -1,0 +1,158 @@
+{
+  "info": {
+    "name": "CareerFlow REST API Collection",
+    "description": "Comprehensive Postman test collection for CareerFlow Spring Boot 3 Backend",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080/api/v1",
+      "type": "string"
+    },
+    {
+      "key": "jwtToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "refreshToken",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Authentication",
+      "item": [
+        {
+          "name": "Register New Candidate",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Alex Developer\",\n  \"email\": \"alex.dev@careerflow.local\",\n  \"password\": \"CareerFlow@2026\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/register" }
+          }
+        },
+        {
+          "name": "Login (Generate JWT)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.data && json.data.accessToken) {",
+                  "    pm.collectionVariables.set('jwtToken', json.data.accessToken);",
+                  "    pm.collectionVariables.set('refreshToken', json.data.refreshToken);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"alex.dev@careerflow.local\",\n  \"password\": \"CareerFlow@2026\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/login" }
+          }
+        },
+        {
+          "name": "Get Current Profile (/me)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/auth/me" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Companies",
+      "item": [
+        {
+          "name": "Create Company",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwtToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Netflix\",\n  \"website\": \"https://jobs.netflix.com\",\n  \"location\": \"Los Gatos, CA / Remote\",\n  \"industry\": \"Streaming & Entertainment\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/companies" }
+          }
+        },
+        {
+          "name": "List Companies with Search & Pagination",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/companies?page=0&size=10&sortBy=name&sortDir=asc"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Applications",
+      "item": [
+        {
+          "name": "Create Application",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwtToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"companyId\": 1,\n  \"jobTitle\": \"Senior Java Backend Engineer\",\n  \"jobLocation\": \"Remote\",\n  \"salaryMin\": 130000,\n  \"salaryMax\": 180000,\n  \"status\": \"APPLIED\",\n  \"appliedDate\": \"2026-11-02\",\n  \"skills\": [\"Java 21\", \"Spring Boot\", \"MySQL\", \"Docker\"],\n  \"notes\": \"Referred by Senior Tech Lead\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/applications" }
+          }
+        },
+        {
+          "name": "Search & Filter Applications (JPA Specification)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/applications?search=Java&page=0&size=10&sortBy=appliedDate&sortDir=desc"
+            }
+          }
+        },
+        {
+          "name": "Dashboard Aggregated Analytics",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/applications/dashboard/stats" }
+          }
+        }
+      ]
+    }
+  ]
+}
