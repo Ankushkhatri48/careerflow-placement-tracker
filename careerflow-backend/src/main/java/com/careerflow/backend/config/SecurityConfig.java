@@ -74,14 +74,15 @@ public class SecurityConfig {
                         .accessDeniedHandler(accessDeniedHandler)
                 )
                 .authorizeHttpRequests(auth -> auth
-                        // Public Auth endpoints
-                        .requestMatchers("/api/v1/auth/**").permitAll()
-                        // OpenAPI / Swagger endpoints
+                        // Root path and Swagger documentation
                         .requestMatchers(
+                                "/",
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html"
                         ).permitAll()
+                        // Public Auth endpoints
+                        .requestMatchers("/api/v1/auth/**").permitAll()
                         // Public OPTIONS for CORS preflights
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         // All other APIs require authentication
